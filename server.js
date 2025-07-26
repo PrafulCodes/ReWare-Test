@@ -116,7 +116,14 @@ app.use('/images', express.static(path.join(__dirname, 'Images')));
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "Templates", "index.html"));
 });
-
+app.get("/:page", (req, res) => {
+  const filePath = path.join(__dirname, "Templates", `${req.params.page}`);
+  res.sendFile(filePath, function (err) {
+    if (err) {
+      res.status(404).send("Page not found");
+    }
+  });
+});
 // ✅ Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
