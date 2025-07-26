@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>ReWare Clothing</title>
+</head>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAxtSJ5KqfiKjJ7ybOXdqBIqR9Kj1Vaxk8",
+    authDomain: "reware-clothing-7d43e.firebaseapp.com",
+    projectId: "reware-clothing-7d43e",
+    storageBucket: "reware-clothing-7d43e.appspot.com",
+    messagingSenderId: "678123595211",
+    appId: "1:678123595211:web:0e0d1604c0e7929507024e",
+    measurementId: "G-HNSSKC332H"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const userInfo = document.getElementById("userInfo");
+  const loginBtn = document.getElementById("loginBtn");
+  const userName = document.getElementById("navUserName");
+  const userPhoto = document.getElementById("navUserPhoto");
+
+  // FAST LOAD FROM CACHE
+  const cachedName = localStorage.getItem("userName");
+  const cachedPhoto = localStorage.getItem("userPhoto");
+
+  if (cachedName && cachedPhoto) {
+    userName.textContent = cachedName;
+    userPhoto.src = cachedPhoto;
+    userInfo.classList.remove("hidden");
+    loginBtn.classList.add("hidden");
+  }
+
+  // Firebase Real Auth Check (ensure session is valid)
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const { displayName, photoURL } = user;
+
+      // Save to localStorage for faster next loads
+      localStorage.setItem("userName", displayName);
+      localStorage.setItem("userPhoto", photoURL);
+
+      // Preload image to avoid flicker
+      const img = new Image();
+      img.src = photoURL;
+      img.onload = () => {
+        userName.textContent = displayName;
+        userPhoto.src = photoURL;
+        userInfo.classList.remove("hidden");
+        loginBtn.classList.add("hidden");
+      };
+    } else {
+      // Clear storage on logout
+      localStorage.removeItem("userName");
+      localStorage.removeItem("userPhoto");
+      userInfo.classList.add("hidden");
+      loginBtn.classList.remove("hidden");
+    }
+  });
+  
+</script>
+
+<body>
+  <!-- Navbar -->
+<div class="bg-white shadow-md px-6 py-4 fixed top-0 left-0 w-full z-50">
+  <nav class="flex items-center justify-between">
+    <!-- Logo -->
+    <h1 class="text-2xl font-semibold text-gray-800">
+      <span class="text-orange-500 font-bold">Re</span>Wear
+    </h1>
+
+    <!-- Hamburger Button (Mobile Only) -->
+<div class="md:hidden text-right px-4 py-2">
+  <button class="text-gray-800 text-3xl focus:outline-none cursor-pointer" onclick="toggleMenu()">
+    &#9776;
+  </button>
+</div>
+
+<!-- Side Panel -->
+<div id="sideMenu" class="fixed top-0 right-0 h-full w-64 bg-white shadow-lg transform translate-x-full transition-transform duration-300 ease-in-out z-50">
+  <div class="flex justify-between items-center px-4 py-4 border-b">
+    <h2 class="text-xl font-bold text-orange-500">Menu</h2>
+    <button onclick="toggleMenu()" class="text-2xlfont-semibold text-gray-800"> <img src="/images/xicon.png" alt="x img" class="h-7 w-7 mx-7 my-3"></button>
+  </div>
+  <ul class="flex flex-col p-4 space-y-4 text-gray-700 font-semibold">
+    <li><a href="/templates/index.html" onclick="toggleMenu()" class="hover:text-orange-500">Home</a></li>
+    <li><a href="/templates/Listitems.html" onclick="toggleMenu()" class="hover:text-orange-500">Start Swapping</a></li>
+    <li><a href="/templates/MainCategory.html" onclick="toggleMenu()" class="hover:text-orange-500">Category</a></li>
+    <li><a href="/templates/About.html" onclick="toggleMenu()" class="hover:text-orange-500">About The Developer</a></li>
+    <li><a href="/templates/contact_us.html" onclick="toggleMenu()" class="hover:text-orange-500">Contact</a></li>
+    <li><a href="/templates/login.html" onclick="toggleMenu()" class="px-3 py-2 bg-orange-500 text-white hover:bg-white border-2 hover:border-orange-500 hover:text-black rounded-md">Login</a></li>
+  </ul>
+</div>
+
+    <!-- Nav Links -->
+    <ul id="navMenu" class="hidden md:flex flex-col md:flex-row gap-6 mt-4 md:mt-0 text-gray-700 font-semibold">
+      <li>
+        <a href="/templates/index.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">Home</a>
+      </li>
+      <li>
+        <a href="/templates/Listitems.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">Start Swapping</a>
+      </li>
+      <li>
+        <a href="/templates/MainCategory.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">Category</a>
+      </li>
+      <li>
+        <a href="/templates/About.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">About The Developer</a>
+      </li>
+      <li>
+        <a href="/templates/contact_us.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">Contact</a>
+      </li>
+
+      <!-- USER PROFILE -->
+      <li id="userInfo" class="hidden">
+        <a href="/templates/Userdashboard.html" class="flex items-center gap-2">
+          <img id="navUserPhoto" class="w-6 h-6 rounded-full" src="" alt="User"/>
+          <span id="navUserName" class="text-gray-800 font-semibold"></span>
+        </a>
+      </li>
+
+      <!-- LOGIN BUTTON -->
+      <li id="loginBtn">
+        <a href="/templates/login.html" class="px-3 py-2 bg-orange-500 text-white hover:bg-white border-2 hover:border-orange-500 hover:text-black rounded-md">
+          Login
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
+<br> <br> 
+
+  <div class="relative h-[90vh] bg-[url('/images/bg_image.jpg')] bg-cover bg-center">
+    <div class="bg-white/50 backdrop-invert backdrop-opacity-10 h-166">
+
+      <div class="relative z-10 flex flex-col items-center justify-center h-130 text-center text-black px-4">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6">Swap. Save. Style.</h2>
+        <p class="text-lg md:text-xl mb-6 max-w-xl ">Make fashion sustainable through community clothing exchange. List your items, earn points, and discover your next outfit!</p>
+        <div class="flex gap-4 flex-wrap justify-center">
+          <a href="/templates/Listitems.html" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-md transition duration-300"> <i class="fa-solid fa-swap"></i> Start Swapping</a>
+          <a href="/templates/MainCategory.html" class="bg-white text-orange-500 hover:text-white hover:bg-orange-500 px-6 py-3 rounded-md border border-orange-500 transition duration-300"> <i class="fa-solid fa-shirt"></i> Explore Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="my-20 px-6">
+  <h1 class="font-bold text-center text-3xl mb-12">How it works</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+    <!-- Card 1 -->
+    <div class="bg-white p-6 rounded-xl border border-red-500">
+      <img src="/Images/login.png" alt="Sign Up Icon" class="h-32 w-auto object-contain mx-auto mb-4">
+      <h2 class="text-xl font-semibold text-center mb-2">1. Sign Up & Create Profile</h2>
+      <p class="text-center text-gray-700">Join ReWear for free and build your profile to start swapping clothes with your community.</p>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="bg-white p-6 rounded-xl border border-red-500">
+      <img src="/Images/listing final.png" alt="List Item Icon" class="h-32 w-auto object-contain mx-auto mb-4">
+      <h2 class="text-xl font-semibold text-center mb-2">2. List Your Clothes</h2>
+      <p class="text-center text-gray-700">Upload images, describe your item, and either offer it for swap or redeemable points.</p>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="bg-white p-6 rounded-xl border border-red-500">
+      <img src="/Images/start swapping.png" alt="Swap Icon" class="h-32 w-auto object-contain mx-auto mb-4">
+      <h2 class="text-xl font-semibold text-center mb-2">3. Explore our categories</h2>
+      <p class="text-center text-gray-700">Browse through our categories and find the perfect outfit for you.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- --------------------------------------------------------------------------------------------------------- -->
+<div class="my-10 px-4 sm:px-6 bg-[#FBE7D5] py-8 sm:py-10 rounded-xl border border-orange-500 max-w-7xl mx-30">
+  <div class="flex flex-col md:flex-row items-center gap-8 sm:gap-10">
+    
+    <!-- Left: Text Section -->
+    <div class="w-full md:w-1/2 text-center md:text-left">
+      <h1 class="font-semibold text-2xl sm:text-3xl mb-4 sm:mb-6">Categories</h1>
+      <p class="text-gray-700 text-sm sm:text-base leading-relaxed sm:leading-loose">
+        Explore a wide range of clothing categories tailored to every style, season, and personality.
+        From casual tops and trendy bottoms to cozy jackets, elegant dresses, and unique accessories – we’ve curated it all in one place for you. Whether you're updating your wardrobe or looking to swap out gently used favorites, our platform makes it easy to browse, connect, and find exactly what you’re looking for. Each item is listed by real people who believe in giving fashion a second chance. So dive in, discover hidden gems, and join the movement of sustainable, stylish, and meaningful fashion swapping.
+      </p>
+      <br>
+      <a href="/templates/MainCategory.html">
+        <button class="bg-orange-500 hover:bg-orange-600 text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-md transition duration-300">
+          Explore Now
+        </button>
+      </a>
+    </div>
+
+    <!-- Right: Image Grid -->
+    <div class="w-full md:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+      
+      <a href="/templates/category1 .html"> <div class="bg-white p-3 sm:p-4 rounded-lg shadow text-center">
+        <img src="/images/tshirt mens 3.jpg" alt="Tops" class="w-100 h-48 object-contain mb-2 rounded-md ">
+        <p class="font-medium">Tops</p>
+      </div> </a>
+
+      <a href = "/templates/category2.html"> <div class="bg-white p-3 sm:p-4 rounded-lg shadow text-center">
+        <img src="/images/Ladies Pant 13.jpg" alt="Bottoms" class="w-100 h-48 object-contain mb-2 rounded-md ">
+        <p class="font-medium">Bottoms</p>
+      </div> </a>
+
+      <a href = "/templates/category6.html"><div class="bg-white p-3 sm:p-4 rounded-lg shadow text-center">
+        <img src="/images/kids accessories 14.png" alt="Accessories" class="w-100 h-48 object-contain mb-2 rounded-md ">
+        <p class="font-medium">Accessories</p>
+      </div></a>
+
+      <a href = "/templates/category3.html"><div class="bg-white p-3 sm:p-4 rounded-lg shadow text-center">
+        <img src="/images/Ladies Jackets 30.jpg" alt="Jackets" class="w-100 h-48 object-contain mb-2 rounded-md ">
+        <p class="font-medium">Jackets</p>
+      </div></a>
+    </div>
+  </div>
+</div>
+
+<!-- --------------------------------------------------------------------------------------------------------- -->
+
+
+<!-- Section Wrapper -->
+<div class="my-20 px-6">
+    <h1 class="font-bold text-center text-3xl mb-12">Trending Swaps</h1>
+
+  <!-- Scrollable Card Row -->
+  <div class="flex space-x-6 overflow-x-auto scrollbar-hide">
+    
+    <!-- Card -->
+    <div class="min-w-[500px] h-80 bg-gray-100 rounded-xl shadow p-4 flex items-center">
+      <!-- Left: Image -->
+      <img src="/images/jacket1.jpg" alt="Dress" class="w-60 h-70 object-cover rounded-md">
+
+      <!-- Right: Content -->
+      <div class="ml-6 flex flex-col justify-between">
+        <h3 class="text-xl font-bold">JACKET</h3>
+        <p class="text-sm text-gray-600 mb-1">
+          Stylish olive green bomber jacket with zipper pockets and ribbed cuffs. Great for chilly evenings.        </p>
+        <p class="text-sm text-gray-700 mb-1">Jacket-L</p>
+        <p class="text-sm text-yellow-600 font-semibold">New</p>
+        <p class="text-sm text-orange-500 font-bold mb-2">🪙 30 Points</p>
+        <button class="buy-btn bg-orange-500 text-white px-4 py-1 rounded hover:bg-orange-600 transition cursor-pointer" data-points="30"> Buy Now </button>
+      </div>
+    </div>
+
+    <div class="min-w-[500px] h-80 bg-gray-100 rounded-xl shadow p-4 flex items-center">
+      <!-- Left: Image -->
+      <img src="/images/jeans1.jpg" alt="Dress" class="w-60 h-70 object-cover rounded-md">
+
+      <!-- Right: Content -->
+      <div class="ml-6 flex flex-col justify-between">
+        <h3 class="text-xl font-bold">JEANS</h3>
+        <p class="text-sm text-gray-600 mb-1">
+            Faded black skinny jeans with a comfortable stretch fit. A wardrobe essential for everyday wear.
+        </p>
+        <p class="text-sm text-gray-700 mb-1">Bottom-32</p>
+        <p class="text-sm text-yellow-600 font-semibold">Good</p>
+        <p class="text-sm text-orange-500 font-bold mb-2">🪙 20 Points</p>
+        <button class="buy-btn bg-orange-500 text-white px-4 py-1 rounded hover:bg-orange-600 transition cursor-pointer" data-points="20"> Buy Now </button>
+      </div>
+    </div>
+
+    <div class="min-w-[500px] h-80 bg-gray-100 rounded-xl shadow p-4 flex items-center">
+      <!-- Left: Image -->
+      <img src="/images/Ladies dress 20.jpg" alt="Dress" class="w-60 h-70 object-cover rounded-md">
+
+      <!-- Right: Content -->
+      <div class="ml-6 flex flex-col justify-between">
+        <h3 class="text-xl font-bold">DRESS</h3>
+        <p class="text-sm text-gray-600 mb-1">
+          Elegant maroon midi dress with floral embroidery, ideal for parties and casual evenings.
+        </p>
+        <p class="text-sm text-gray-700 mb-1">Dress-M</p>
+        <p class="text-sm text-yellow-600 font-semibold">Gently Used</p>
+        <p class="text-sm text-orange-500 font-bold mb-2">🪙 20 Points</p>
+        <button 
+  class="buy-btn bg-orange-500 text-white px-4 py-1 rounded hover:bg-orange-600 transition cursor-pointer" 
+  data-points="20">
+  Buy Now
+</button>
+
+      </div>
+    </div>
+
+    <div class="min-w-[500px] h-80 bg-gray-100 rounded-xl shadow p-4 flex items-center">
+      <!-- Left: Image --> 
+      <img src="/images/tshirt mens 1.jpg" alt="Dress" class="w-60 h-70 object-cover rounded-md">
+
+      <!-- Right: Content -->
+      <div class="ml-6 flex flex-col justify-between">
+        <h3 class="text-xl font-bold">T-SHIRT</h3>
+        <p class="text-sm text-gray-600 mb-1">
+          Graphic print black tee with soft cotton fabric and crew neck design.
+        </p>
+        <p class="text-sm text-gray-700 mb-1">Top-L</p>
+        <p class="text-sm text-yellow-600 font-semibold">Good</p>
+        <p class="text-sm text-orange-500 font-bold mb-2">🪙 10 Points</p>
+        <button 
+  class="buy-btn bg-orange-500 text-white px-4 py-1 rounded hover:bg-orange-600 transition cursor-pointer" 
+  data-points="10">
+  Buy Now
+</button>
+
+      </div>
+    </div>
+
+    <div class="min-w-[500px] h-80 bg-gray-100 rounded-xl shadow p-4 flex items-center">
+      <!-- Left: Image -->
+      <img src="/images/croptop.png" alt="Dress" class="w-60 h-70 object-cover rounded-md">
+
+      <!-- Right: Content -->
+      <div class="ml-6 flex flex-col justify-between">
+        <h3 class="text-xl font-bold">CROP TOP</h3>
+        <p class="text-sm text-gray-600 mb-1">
+          White ribbed crop top with puff sleeves. Perfect for summer styling.
+        </p>
+        <p class="text-sm text-gray-700 mb-1">Top-S</p>
+        <p class="text-sm text-yellow-600 font-semibold">New</p>
+        <p class="text-sm text-orange-500 font-bold mb-2">🪙 18 Points</p>
+        <button 
+  class="buy-btn bg-orange-500 text-white px-4 py-1 rounded hover:bg-orange-600 transition cursor-pointer" 
+  data-points="18">
+  Buy Now
+</button>
+
+      </div>
+    </div>
+
+    <div class="min-w-[500px] h-80 bg-gray-100 rounded-xl shadow p-4 flex items-center">
+      <!-- Left: Image -->
+      <img src="/images/scarf.png" alt="Dress" class="w-60 h-70 object-cover rounded-md">
+
+      <!-- Right: Content -->
+      <div class="ml-6 flex flex-col justify-between">
+        <h3 class="text-xl font-bold">SCARF</h3>
+        <p class="text-sm text-gray-600 mb-1">
+          Lightweight printed scarf in pastel tones. Adds elegance to any outfit.
+        </p>
+        <p class="text-sm text-gray-700 mb-1">Accessory</p>
+        <p class="text-sm text-yellow-600 font-semibold">Gently Used</p>
+        <p class="text-sm text-orange-500 font-bold mb-2">🪙 7 Points</p>
+        <button 
+  class="buy-btn bg-orange-500 text-white px-4 py-1 rounded hover:bg-orange-600 transition cursor-pointer" 
+  data-points="7">
+  Buy Now
+</button>
+
+      </div>
+    </div>
+
+    <div class="min-w-[500px] h-80 bg-gray-100 rounded-xl shadow p-4 flex items-center">
+      
+      <img src="/images/shorts.png" alt="Dress" class="w-60 h-70 object-cover rounded-md">
+
+      
+      <div class="ml-6 flex flex-col justify-between">
+        <h3 class="text-xl font-bold">SHORTS</h3>
+        <p class="text-sm text-gray-600 mb-1">
+          Denim high-waist shorts with frayed hem. Great for summer adventures.
+        </p>
+        <p class="text-sm text-gray-700 mb-1">Bottom-M</p>
+        <p class="text-sm text-yellow-600 font-semibold">Good</p>
+        <p class="text-sm text-orange-500 font-bold mb-2">🪙 14 Points</p>
+       <button 
+  class="buy-btn bg-orange-500 text-white px-4 py-1 rounded hover:bg-orange-600 transition cursor-pointer" 
+  data-points="14">
+  Buy Now
+</button>
+
+      </div>
+    </div>
+    <div class="min-w-[500px] h-80 bg-gray-100 rounded-xl shadow p-4 flex items-center">
+      
+      <img src="/images/blazer.png" alt="Dress" class="w-60 h-70 object-cover rounded-md">
+
+      
+      <div class="ml-6 flex flex-col justify-between">
+        <h3 class="text-xl font-bold">BLAZER</h3>
+        <p class="text-sm text-gray-600 mb-1">
+          Navy blue formal blazer with tailored fit. Great for meetings and interviews.
+        </p>
+        <p class="text-sm text-gray-700 mb-1">Jacket-M</p>
+        <p class="text-sm text-yellow-600 font-semibold">Gently Used</p>
+        <p class="text-sm text-orange-500 font-bold mb-2">🪙 35 Points</p>
+        <button 
+  class="buy-btn bg-orange-500 text-white px-4 py-1 rounded hover:bg-orange-600 transition cursor-pointer" 
+  data-points="35">
+  Buy Now
+</button>
+
+      </div>
+    </div>
+    <!-- aur card dal na hai tho idhar daalo -->
+  </div>
+</div>
+<!-- --------------------------------------------------------------------------------------------------------- -->
+
+
+
+<!-- Testimonials Section -->
+<div class="my-20 px-6  p-10 rounded-xl max-w-7xl mx-auto">
+  <h2 class="text-3xl font-bold text-center mb-10">Testimonials</h2>
+
+  <div class="flex flex-col md:flex-row gap-6 justify-center items-stretch">
+    
+   
+    <div class="bg-[#FFEAD6] rounded-xl p-6 flex-1 shadow">
+      <h3 class="font-bold text-lg mb-2">Aiden</h3>
+      <div class="text-yellow-500 mb-3">
+        ⭐ ⭐ ⭐ ⭐ ⭐
+      </div>
+      <p class="text-gray-700">
+        ReWear helped me save money and reduce waste! I’ve swapped six outfits and loved every one of them.
+        ReWear helped me save money and reduce waste! I’ve swapped six outfits and loved every one of them.
+        ReWear helped me save money and reduce waste! I’ve swapped six outfits and loved every one of them.
+        ReWear helped me save money and reduce waste! I’ve swapped six outfits and loved every one of them.
+        ReWear helped me save money and reduce waste! I’ve swapped six outfits and loved every one of them.
+      </p>
+    </div>
+
+    
+    <div class="flex flex-col gap-6 flex-1">
+      <!-- Top Small Box -->
+      <div class="bg-[#FFEAD6] rounded-xl p-6 shadow">
+        <h3 class="font-bold text-lg mb-2">Aiden</h3>
+        <div class="text-yellow-500">
+          ⭐ ⭐ ⭐ ⭐ ⭐
+        </div>
+        <p class="text-gray-700">
+        ReWear helped me save money and reduce waste! I’ve swapped six outfits and loved every one of them.
+      </p>
+      </div>
+
+      <!-- Bottom Small Box -->
+      <div class="bg-[#FFEAD6] rounded-xl p-6 shadow">
+        <h3 class="font-bold text-lg mb-2">Aiden</h3>
+        <div class="text-yellow-500">
+          ⭐ ⭐ ⭐ ⭐ ⭐
+        </div>
+        <p class="text-gray-700">
+        ReWear helped me save money and reduce waste! I’ve swapped six outfits and loved every one of them.
+      </p>
+      </div>
+    </div>
+
+    <div class="bg-[#FFEAD6] rounded-xl p-6 flex-1 shadow">
+      <h3 class="font-bold text-lg mb-2">Aiden</h3>
+      <div class="text-yellow-500 mb-3">
+        ⭐ ⭐ ⭐ ⭐ ⭐
+      </div>
+      <p class="text-gray-700">
+        ReWear helped me save money and reduce waste! I’ve swapped six outfits and loved every one of them.
+        ReWear helped me save money and reduce waste! I’ve swapped six outfits and loved every one of them.
+        ReWear helped me save money and reduce waste! I’ve swapped six outfits and loved every one of them.
+        ReWear helped me save money and reduce waste! I’ve swapped six outfits and loved every one of them.
+        ReWear helped me save money and reduce waste! I’ve swapped six outfits and loved every one of them.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<!-- --------------------------------------------------------------------------------------------------------- -->
+
+<footer class="bg-[#131212] px-6 py-10 text-white mt-20">
+  <div class="max-w-7xl mx-15 flex flex-col md:flex-row justify-between gap-10">
+    
+    <!-- Left: Info Links -->
+    <div class="md:w-1/2 grid grid-cols-2 gap-5">
+      <h1 class="text-4xl font-semibold text-white">
+        <span class="text-orange-500 font-bold">Re</span>Wear
+      </h1>
+      <br>
+
+      <ul class="space-y-2">
+       <p class ="text-orange-500 text-1xl">HelpFul Links</p>       
+        <li><a href="/templates/About.html" class="hover:underline">About Us</a></li>
+        <li><a href="/templates/Terms_Condition.html" class="hover:underline">Terms & Conditions</a></li>
+        <li><a href="/templates/Privacy.html" class="hover:underline">Privacy Policy</a></li>
+        
+      </ul>
+
+      <ul class="space-y-2">
+        <br>
+        <li><a href="/templates/index.html" class="hover:underline">Home</a></li>
+        <li><a href="/templates/Listitems.html" class="hover:underline">Start Swaping</a></li>
+        <li><a href="/templates/MainCategory.html" class="hover:underline">Category</a></li>
+        <li><a href="/templates/login.html" class="hover:underline">Login</a></li>
+      </ul>
+
+      
+    </div>
+
+    <!-- Right: Contact -->
+    <div>
+      <h3 class="text-xl font-semibold mb-4">Contact Us</h3>
+      <ul class="space-y-2">
+        <li>Email: <a href="mailto:support@rewear.com" class="hover:underline text-Orange-600">support@rewear.com</a></li>
+        <li>
+          <input type="email" placeholder="Enter your email" class="w-full max-w-md border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"/>
+        </li>
+
+        <li>Phone: <a href="tel:+918000000000" class="hover:underline text-orange-500">+91 80000 00000</a></li>
+        <li>Address: Thane, Maharashtra, India</li>
+        <div class="space-x-4">
+          <i class="fa-brands fa-linkedin"></i> <i class="fa-brands fa-github"></i> <i class="fa-brands fa-instagram"></i>
+        </div>
+        
+      </ul>
+    </div>
+  </div>
+
+  <!-- Bottom Line -->
+  <div class="text-center mt-10 text-sm text-gray-600">
+    &copy; 2025 ReWear. All rights reserved By Aiden, Alison and Praful
+  </div>
+</footer>
+
+<script>
+  // Set initial value only if not already set
+  if (localStorage.getItem("userPoints") === null) {
+    localStorage.setItem("userPoints", "200");
+  }
+
+  document.querySelectorAll('.buy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cost = parseInt(btn.getAttribute('data-points'), 10);
+      let userPoints = parseInt(localStorage.getItem("userPoints"), 10);
+
+      if (userPoints >= cost) {
+        userPoints -= cost;
+        localStorage.setItem("userPoints", userPoints.toString());
+
+        alert(`✅ Points Deducted: ${cost}\n🪙 Remaining Points: ${userPoints}`);
+      } else {
+        alert("❌ Not enough points!");
+      }
+    });
+     window.addEventListener('beforeunload', () => {
+    firebase.auth().signOut();
+     });
+  });
+</script>
+
+
+
+<script src="/static/script.js"></script>
+</body>
+</html>

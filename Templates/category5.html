@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>ReWare Clothing</title>
+</head>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAxtSJ5KqfiKjJ7ybOXdqBIqR9Kj1Vaxk8",
+    authDomain: "reware-clothing-7d43e.firebaseapp.com",
+    projectId: "reware-clothing-7d43e",
+    storageBucket: "reware-clothing-7d43e.appspot.com",
+    messagingSenderId: "678123595211",
+    appId: "1:678123595211:web:0e0d1604c0e7929507024e",
+    measurementId: "G-HNSSKC332H"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const userInfo = document.getElementById("userInfo");
+  const loginBtn = document.getElementById("loginBtn");
+  const userName = document.getElementById("navUserName");
+  const userPhoto = document.getElementById("navUserPhoto");
+
+  // FAST LOAD FROM CACHE
+  const cachedName = localStorage.getItem("userName");
+  const cachedPhoto = localStorage.getItem("userPhoto");
+
+  if (cachedName && cachedPhoto) {
+    userName.textContent = cachedName;
+    userPhoto.src = cachedPhoto;
+    userInfo.classList.remove("hidden");
+    loginBtn.classList.add("hidden");
+  }
+
+  // Firebase Real Auth Check (ensure session is valid)
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const { displayName, photoURL } = user;
+
+      // Save to localStorage for faster next loads
+      localStorage.setItem("userName", displayName);
+      localStorage.setItem("userPhoto", photoURL);
+
+      // Preload image to avoid flicker
+      const img = new Image();
+      img.src = photoURL;
+      img.onload = () => {
+        userName.textContent = displayName;
+        userPhoto.src = photoURL;
+        userInfo.classList.remove("hidden");
+        loginBtn.classList.add("hidden");
+      };
+    } else {
+      // Clear storage on logout
+      localStorage.removeItem("userName");
+      localStorage.removeItem("userPhoto");
+      userInfo.classList.add("hidden");
+      loginBtn.classList.remove("hidden");
+    }
+  });
+   
+</script>
+
+<body>
+  <!-- Navbar -->
+<div class="bg-white shadow-md px-6 py-4 fixed top-0 left-0 w-full z-50">
+  <nav class="flex items-center justify-between">
+    <!-- Logo -->
+    <h1 class="text-2xl font-semibold text-gray-800">
+      <span class="text-orange-500 font-bold">Re</span>Wear
+    </h1>
+
+    <!-- Hamburger Button (Mobile Only) -->
+<div class="md:hidden text-right px-4 py-2">
+  <button class="text-gray-800 text-3xl focus:outline-none cursor-pointer" onclick="toggleMenu()">
+    &#9776;
+  </button>
+</div>
+
+<!-- Side Panel -->
+<div id="sideMenu" class="fixed top-0 right-0 h-full w-64 bg-white shadow-lg transform translate-x-full transition-transform duration-300 ease-in-out z-50">
+  <div class="flex justify-between items-center px-4 py-4 border-b">
+    <h2 class="text-xl font-bold text-orange-500">Menu</h2>
+    <button onclick="toggleMenu()" class="text-2xlfont-semibold text-gray-800"> <img src="/images/xicon.png" alt="x img" class="h-7 w-7 mx-7 my-3"></button>
+  </div>
+  <ul class="flex flex-col p-4 space-y-4 text-gray-700 font-semibold">
+    <li><a href="/templates/index.html" onclick="toggleMenu()" class="hover:text-orange-500">Home</a></li>
+    <li><a href="/templates/Listitems.html" onclick="toggleMenu()" class="hover:text-orange-500">Start Swapping</a></li>
+    <li><a href="/templates/MainCategory.html" onclick="toggleMenu()" class="hover:text-orange-500">Category</a></li>
+    <li><a href="/templates/About.html" onclick="toggleMenu()" class="hover:text-orange-500">About The Developer</a></li>
+    <li><a href="/templates/contact_us.html" onclick="toggleMenu()" class="hover:text-orange-500">Contact</a></li>
+    <li><a href="/templates/login.html" onclick="toggleMenu()" class="px-3 py-2 bg-orange-500 text-white hover:bg-white border-2 hover:border-orange-500 hover:text-black rounded-md">Login</a></li>
+  </ul>
+</div>
+
+    <!-- Nav Links -->
+    <ul id="navMenu" class="hidden md:flex flex-col md:flex-row gap-6 mt-4 md:mt-0 text-gray-700 font-semibold">
+      <li>
+        <a href="/templates/index.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">Home</a>
+      </li>
+      <li>
+        <a href="/templates/Listitems.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">Start Swapping</a>
+      </li>
+      <li>
+        <a href="/templates/MainCategory.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">Category</a>
+      </li>
+      <li>
+        <a href="/templates/About.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">About The Developer</a>
+      </li>
+      <li>
+        <a href="/templates/contact_us.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">Contact</a>
+      </li>
+
+      <!-- USER PROFILE -->
+      <li id="userInfo" class="hidden">
+        <a href="/templates/Userdashboard.html" class="flex items-center gap-2">
+          <img id="navUserPhoto" class="w-6 h-6 rounded-full" src="" alt="User"/>
+          <span id="navUserName" class="text-gray-800 font-semibold"></span>
+        </a>
+      </li>
+
+      <!-- LOGIN BUTTON -->
+      <li id="loginBtn">
+        <a href="/templates/login.html" class="px-3 py-2 bg-orange-500 text-white hover:bg-white border-2 hover:border-orange-500 hover:text-black rounded-md">
+          Login
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
+<br><br><br>
+
+
+  <!-- --------------------------------------------------------------------------------------------------------- -->
+
+<section class="bg-white py-10 px-4">
+  <!-- Banner Image -->
+  <div class="max-w-6xl mx-auto mb-10">
+    <img src="/images/banner5.jpg" alt="T-shirts banner" class="w-full rounded-md shadow-lg" />
+  </div>
+
+  <!-- Heading and Categories -->
+  <div class="text-center mb-6">
+    <h2 class="text-3xl sm:text-4xl md:text-5xl font-semibold mb-2">Browse Footwear</h2>
+    <div class="space-x-4 text-gray-600 font-medium">
+      <button class="hover:text-orange-500">Men</button>
+      <button class="hover:text-orange-500">Women</button>
+      <button class="hover:text-orange-500">Kids</button>
+    </div>
+  </div>
+
+  <!-- Item Cards Grid -->
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+    
+    <!-- Card 1 -->
+<div class="product bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/kids footwear 1.jpg" alt="Small Steps" class="product-image w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Small Steps</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹599</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<!-- Card 2 -->
+<div class="product bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/kids footwear 2.jpg" alt="Tiny Toes" class="product-image w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Tiny Toes</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹1000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<!-- Card 3 -->
+<div class="product bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/kids footwear 4.jpg" alt="HopFlip" class="product-image w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">HopFlip</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹1000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<!-- Card 4 -->
+<div class="product bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/kids footwear 5.jpg" alt="CubKicks" class="product-image w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">CubKicks</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<!-- Card 5 -->
+<div class="product bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/kids footwear 6.jpg" alt="WiggleFeet" class="product-image w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">WiggleFeet</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹500</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<!-- Card 6 -->
+<div class="product bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/kids footwear 7.jpg" alt="PeppyJaws" class="product-image w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">PeppyJaws</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹2000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<!-- Card 7 -->
+<div class="product bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/kids footwear 8.jpg" alt="Frolic Feet" class="product-image w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Frolic Feet</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹599</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<!-- Card 8 -->
+<div class="product bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/kids footwear 9.jpg" alt="KiddieDash" class="product-image w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">KiddieDash</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹899</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<!-- Card 9 -->
+<div class="product bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/kids footwear 10.jpg" alt="Run n Fun" class="product-image w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Run n Fun</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹3999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<!-- Card 10 -->
+<div class="product bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/kids footwear 11.jpg" alt="Turbo Types" class="product-image w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Turbo Types</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹1000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+   <div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/kids footwear 12.jpg" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Zippy</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹2999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/kids footwear 13.jpg" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">GiggleBoots</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹1999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/kids footwear 14.jpg" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Mini Fleets</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹1600</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/kids footwear 15.jpg" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">FlutterSole</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹2000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/ladies footwear 16.jpg" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Shutter Stocks</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹2000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/ladies footwear 17.jpg" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Blush & Boots</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹899</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/ladies footwear 18.jpg" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Sassy Soles</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹1000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/ladies footwear 19.png" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Belle Footwear</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹2999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/ladies footwear 20.png" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Glam Walk</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹1000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/ladies footwear 21.jpg" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Pearl Stride</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹899</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+
+    <div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/ladies footwear 22.png" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="text-lg font-semibold product-name">Step & Shine</h3>
+  <p class="text-gray-600 text-sm mb-2 product-price">₹1000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/ladies footwear 23.jpg" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="text-lg font-semibold product-name">Heel Haven</h3>
+  <p class="text-gray-600 text-sm mb-2 product-price">₹1999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/ladies footwear 24.jpg" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="text-lg font-semibold product-name">Sole Queen</h3>
+  <p class="text-gray-600 text-sm mb-2 product-price">₹2999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/ladies footwear 25.png" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="text-lg font-semibold product-name">Femme Stepwear</h3>
+  <p class="text-gray-600 text-sm mb-2 product-price">₹999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/mens footwear 26.png" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="text-lg font-semibold product-name">StrideX</h3>
+  <p class="text-gray-600 text-sm mb-2 product-price">₹2000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/mens footwear 27.jpg" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="text-lg font-semibold product-name">RugGear</h3>
+  <p class="text-gray-600 text-sm mb-2 product-price">₹2999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/mens footwear 28.jpg" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="text-lg font-semibold product-name">Iron Steps</h3>
+  <p class="text-gray-600 text-sm mb-2 product-price">₹999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/mens footwear 29.jpg" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="text-lg font-semibold product-name">Bloke</h3>
+  <p class="text-gray-600 text-sm mb-2 product-price">₹999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/mens footwear 30.jpg" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="text-lg font-semibold product-name">ModoStep</h3>
+  <p class="text-gray-600 text-sm mb-2 product-price">₹799</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/mens footwear 31.jpg" alt="T-shirt" class="w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="text-lg font-semibold product-name">Forman</h3>
+  <p class="text-gray-600 text-sm mb-2 product-price">₹2999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+    <!-- Product Card 1 -->
+<div class="product-card bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/mens footwear 32.jpg" alt="RoughSole" class="product-img w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">RoughSole</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹5000</p>
+  <button 
+    class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold"
+    data-name="RoughSole"
+    data-price="5000"
+    data-img="/images/mens footwear 32.jpg"
+  >Add To Cart</button>
+</div>
+
+<!-- Product Card 2 -->
+<div class="product-card bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/ladies footwear 33.jpg" alt="PrimeWalk" class="product-img w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">PrimeWalk</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹899</p>
+  <button 
+    class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold"
+    data-name="PrimeWalk"
+    data-price="899"
+    data-img="/images/ladies footwear 33.jpg"
+  >Add To Cart</button>
+</div>
+
+<!-- Product Card 3 -->
+<div class="product-card bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/ladies footwear 34.jpg" alt="Gravix" class="product-img w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Gravix</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹3000</p>
+  <button 
+    class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold"
+    data-name="Gravix"
+    data-price="3000"
+    data-img="/images/ladies footwear 34.jpg"
+  >Add To Cart</button>
+</div>
+
+<!-- Product Card 4 -->
+<div class="product-card bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/ladies footwear 35.jpg" alt="UrbanLoaf" class="product-img w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">UrbanLoaf</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹4999</p>
+  <button 
+    class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold"
+    data-name="UrbanLoaf"
+    data-price="4999"
+    data-img="/images/ladies footwear 35.jpg"
+  >Add To Cart</button>
+</div>
+
+<!-- Product Card 5 -->
+<div class="product-card bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/ladies footwear 36.jpg" alt="BoltFoots" class="product-img w-full h-52 sm:h-64 md:h-72 lg:h-80 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">BoltFoots</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹3999</p>
+  <button 
+    class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold"
+    data-name="BoltFoots"
+    data-price="3999"
+    data-img="/images/ladies footwear 36.jpg"
+  >Add To Cart</button>
+</div>
+
+    
+
+  </div>
+</section>
+
+<!-- --------------------------------------------------------------------------------------------------------- -->
+
+<footer class="bg-[#131212] px-6 py-10 text-white mt-20">
+  <div class="max-w-7xl mx-15 flex flex-col md:flex-row justify-between gap-10">
+    
+    <!-- Left: Info Links -->
+    <div class="md:w-1/2 grid grid-cols-2 gap-5">
+      <h1 class="text-4xl font-semibold text-white">
+        <span class="text-orange-500 font-bold">Re</span>Wear
+      </h1>
+      <br>
+
+      <ul class="space-y-2">
+       <p class ="text-orange-500 text-1xl">HelpFul Links</p>       
+        <li><a href="/templates/About.html" class="hover:underline">About Us</a></li>
+        <li><a href="/templates/Terms_Condition.html" class="hover:underline">Terms & Conditions</a></li>
+        <li><a href="/templates/Privacy.html" class="hover:underline">Privacy Policy</a></li>
+        <li><a href="#" class="hover:underline">FAQs</a></li>
+      </ul>
+
+      <ul class="space-y-2">
+        <br>
+        <li><a href="/templates/index.html" class="hover:underline">Home</a></li>
+        <li><a href="/templates/Listitems.html" class="hover:underline">Start Swaping</a></li>
+        <li><a href="/templates/MainCategory.html" class="hover:underline">Category</a></li>
+        <li><a href="/templates/login.html" class="hover:underline">Login</a></li>
+      </ul>
+
+      
+    </div>
+
+    <!-- Right: Contact -->
+    <div>
+      <h3 class="text-xl font-semibold mb-4">Contact Us</h3>
+      <ul class="space-y-2">
+        <li>Email: <a href="mailto:support@rewear.com" class="hover:underline text-Orange-600">support@rewear.com</a></li>
+        <li>
+          <input type="email" placeholder="Enter your email" class="w-full max-w-md border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"/>
+        </li>
+
+        <li>Phone: <a href="tel:+918000000000" class="hover:underline text-orange-500">+91 80000 00000</a></li>
+        <li>Address: Thane, Maharashtra, India</li>
+        <div class="space-x-4">
+          <i class="fa-brands fa-linkedin"></i> <i class="fa-brands fa-github"></i> <i class="fa-brands fa-instagram"></i>
+        </div>
+        
+      </ul>
+    </div>
+  </div>
+
+  <!-- Bottom Line -->
+  <div class="text-center mt-10 text-sm text-gray-600">
+    &copy; 2025 ReWear. All rights reserved By Aiden, Alison and Praful
+  </div>
+</footer>
+ <script src="../Static/cart.js" defer></script>
+</body>
+<script src="/static/script.js"></script>
+</html>

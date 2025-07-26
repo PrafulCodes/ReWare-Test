@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>ReWare Clothing</title>
+</head>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAxtSJ5KqfiKjJ7ybOXdqBIqR9Kj1Vaxk8",
+    authDomain: "reware-clothing-7d43e.firebaseapp.com",
+    projectId: "reware-clothing-7d43e",
+    storageBucket: "reware-clothing-7d43e.appspot.com",
+    messagingSenderId: "678123595211",
+    appId: "1:678123595211:web:0e0d1604c0e7929507024e",
+    measurementId: "G-HNSSKC332H"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const userInfo = document.getElementById("userInfo");
+  const loginBtn = document.getElementById("loginBtn");
+  const userName = document.getElementById("navUserName");
+  const userPhoto = document.getElementById("navUserPhoto");
+
+  // FAST LOAD FROM CACHE
+  const cachedName = localStorage.getItem("userName");
+  const cachedPhoto = localStorage.getItem("userPhoto");
+
+  if (cachedName && cachedPhoto) {
+    userName.textContent = cachedName;
+    userPhoto.src = cachedPhoto;
+    userInfo.classList.remove("hidden");
+    loginBtn.classList.add("hidden");
+  }
+
+  // Firebase Real Auth Check (ensure session is valid)
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const { displayName, photoURL } = user;
+
+      // Save to localStorage for faster next loads
+      localStorage.setItem("userName", displayName);
+      localStorage.setItem("userPhoto", photoURL);
+
+      // Preload image to avoid flicker
+      const img = new Image();
+      img.src = photoURL;
+      img.onload = () => {
+        userName.textContent = displayName;
+        userPhoto.src = photoURL;
+        userInfo.classList.remove("hidden");
+        loginBtn.classList.add("hidden");
+      };
+    } else {
+      // Clear storage on logout
+      localStorage.removeItem("userName");
+      localStorage.removeItem("userPhoto");
+      userInfo.classList.add("hidden");
+      loginBtn.classList.remove("hidden");
+    }
+  });
+   
+</script>
+
+<body>
+  <!-- Navbar -->
+<div class="bg-white shadow-md px-6 py-4 fixed top-0 left-0 w-full z-50">
+  <nav class="flex items-center justify-between">
+    <!-- Logo -->
+    <h1 class="text-2xl font-semibold text-gray-800">
+      <span class="text-orange-500 font-bold">Re</span>Wear
+    </h1>
+
+    <!-- Hamburger Button (Mobile Only) -->
+<div class="md:hidden text-right px-4 py-2">
+  <button class="text-gray-800 text-3xl focus:outline-none cursor-pointer" onclick="toggleMenu()">
+    &#9776;
+  </button>
+</div>
+
+<!-- Side Panel -->
+<div id="sideMenu" class="fixed top-0 right-0 h-full w-64 bg-white shadow-lg transform translate-x-full transition-transform duration-300 ease-in-out z-50">
+  <div class="flex justify-between items-center px-4 py-4 border-b">
+    <h2 class="text-xl font-bold text-orange-500">Menu</h2>
+    <button onclick="toggleMenu()" class="text-2xlfont-semibold text-gray-800"> <img src="/images/xicon.png" alt="x img" class="h-7 w-7 mx-7 my-3"></button>
+  </div>
+  <ul class="flex flex-col p-4 space-y-4 text-gray-700 font-semibold">
+    <li><a href="/templates/index.html" onclick="toggleMenu()" class="hover:text-orange-500">Home</a></li>
+    <li><a href="/templates/Listitems.html" onclick="toggleMenu()" class="hover:text-orange-500">Start Swapping</a></li>
+    <li><a href="/templates/MainCategory.html" onclick="toggleMenu()" class="hover:text-orange-500">Category</a></li>
+    <li><a href="/templates/About.html" onclick="toggleMenu()" class="hover:text-orange-500">About The Developer</a></li>
+    <li><a href="/templates/contact_us.html" onclick="toggleMenu()" class="hover:text-orange-500">Contact</a></li>
+    <li><a href="/templates/login.html" onclick="toggleMenu()" class="px-3 py-2 bg-orange-500 text-white hover:bg-white border-2 hover:border-orange-500 hover:text-black rounded-md">Login</a></li>
+  </ul>
+</div>
+
+    <!-- Nav Links -->
+    <ul id="navMenu" class="hidden md:flex flex-col md:flex-row gap-6 mt-4 md:mt-0 text-gray-700 font-semibold">
+      <li>
+        <a href="/templates/index.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">Home</a>
+      </li>
+      <li>
+        <a href="/templates/Listitems.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">Start Swapping</a>
+      </li>
+      <li>
+        <a href="/templates/MainCategory.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">Category</a>
+      </li>
+      <li>
+        <a href="/templates/About.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">About The Developer</a>
+      </li>
+      <li>
+        <a href="/templates/contact_us.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">Contact</a>
+      </li>
+
+      <!-- USER PROFILE -->
+      <li id="userInfo" class="hidden">
+        <a href="/templates/Userdashboard.html" class="flex items-center gap-2">
+          <img id="navUserPhoto" class="w-6 h-6 rounded-full" src="" alt="User"/>
+          <span id="navUserName" class="text-gray-800 font-semibold"></span>
+        </a>
+      </li>
+
+      <!-- LOGIN BUTTON -->
+      <li id="loginBtn">
+        <a href="/templates/login.html" class="px-3 py-2 bg-orange-500 text-white hover:bg-white border-2 hover:border-orange-500 hover:text-black rounded-md">
+          Login
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
+<br><br><br>
+
+
+  <!-- --------------------------------------------------------------------------------------------------------- -->
+
+<section class="bg-white py-10 px-4">
+  <div class="max-w-0xl mx-0 mb-10">
+    <img src="/images/banner4.jpg" alt="T-shirts banner" class="w-500 rounded-md shadow-lg" />
+  </div>
+
+  <!-- Heading and Categories -->
+  <div class="text-center mb-6">
+    <h2 class="text-5xl font-semibold mb-2">Browse Frocks</h2>
+    <div class="space-x-4 text-gray-600 font-medium">
+      <button class="hover:text-orange-500">Men</button>
+      <button class="hover:text-orange-500">Women</button>
+      <button class="hover:text-orange-500">Kids</button>
+    </div>
+  </div>
+  <br>
+  <br>
+  <!-- Item Cards -->
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+    <!-- Single Card -->
+    <!-- Frokella -->
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 1.jpg" alt="Frokella" class="w-full h-100 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Frokella</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹1000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<!-- Twirl & Tulle -->
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 2.jpg" alt="Twirl & Tulle" class="w-full h-100 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Twirl & Tulle</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹1000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<!-- Bell Jingles -->
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 3.jpg" alt="Bell Jingles" class="w-full h-100 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Bell Jingles</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹2000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<!-- Dress Diary -->
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 4.jpg" alt="Dress Diary" class="w-full h-100 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Dress Diary</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹1999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<!-- FrocksVerse -->
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 5.jpg" alt="FrocksVerse" class="w-full h-100 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">FrocksVerse</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹2000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<!-- FlowLinen -->
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 6.jpg" alt="FlowLinen" class="w-full h-100 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">FlowLinen</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹2999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<!-- Lush Hush -->
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 7.jpg" alt="Lush Hush" class="w-full h-100 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Lush Hush</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹2999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<!-- Freeze Frocks -->
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 8.jpg" alt="Freeze Frocks" class="w-full h-100 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Freeze Frocks</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹1299</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<!-- Gitzz -->
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 9.jpg" alt="Gitzz" class="w-full h-100 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Gitzz</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹2999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<!-- Frockzz Hub -->
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 10.jpg" alt="Frockzz Hub" class="w-full h-100 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Frockzz Hub</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+
+   <div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 11.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Girlz Trendz</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹1299</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 12.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Shopping Starts</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹1111</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 13.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Cinderella</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹4999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 14.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Snowy Frocks</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹1999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 15.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Kind</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹2999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 16.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Sweet n Shoppe</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹2898</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 17.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Frockzz Genx</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 18.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Simplezz</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹1000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 19.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">NxtGEnx</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹2000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 20.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Froxx</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹2999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 21.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Sure999</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+
+    <div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 22.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Dio Frocks</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹3999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 23.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Specialz</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹2999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 24.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">SugarTwirl</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 25.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Glow Frox</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹899</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 26.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Smiling Fits</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹799</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 27.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Twirlia</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹1999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 28.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Pastel Path</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 29.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Frock Tales</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹399</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+<div class="bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 30.jpg" alt="T-shirt" class="w-full h-100 object-contain mb-4 rounded-xl"/>
+  <h3 class="product-name text-lg font-semibold">Whirl Bloom</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹1999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">Add To Cart</button>
+</div>
+
+    <div class="product bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 31.jpg" alt="Pretty" class="product-image w-full h-100 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Pretty</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹1000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">
+    Add To Cart
+  </button>
+</div>
+
+<div class="product bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 32.jpg" alt="Silk Stitches" class="product-image w-full h-100 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Silk Stitches</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹5000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">
+    Add To Cart
+  </button>
+</div>
+
+<div class="product bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 33.jpg" alt="Moon Dreamerz" class="product-image w-full h-100 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Moon Dreamerz</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹899</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">
+    Add To Cart
+  </button>
+</div>
+
+<div class="product bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 34.jpg" alt="Drape n Wear" class="product-image w-full h-100 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Drape n Wear</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹2000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">
+    Add To Cart
+  </button>
+</div>
+
+<div class="product bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 35.jpg" alt="Flowerzz" class="product-image w-full h-100 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Flowerzz</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹4000</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">
+    Add To Cart
+  </button>
+</div>
+
+<div class="product bg-white rounded-lg border border-gray-300 p-4 shadow hover:shadow-lg transition">
+  <img src="/images/Ladies dress 36.jpg" alt="Realx" class="product-image w-full h-100 object-contain mb-4 rounded-xl" />
+  <h3 class="product-name text-lg font-semibold">Realx</h3>
+  <p class="product-price text-gray-600 text-sm mb-2">₹2999</p>
+  <button class="add-to-cart-btn bg-orange-500 text-white text-xs px-3 py-2 rounded cursor-pointer hover:bg-orange-600 transition duration-300 font-semibold">
+    Add To Cart
+  </button>
+</div>
+
+
+    
+
+  </div>
+</section>
+
+<!-- --------------------------------------------------------------------------------------------------------- -->
+
+<footer class="bg-[#131212] px-6 py-10 text-white mt-20">
+  <div class="max-w-7xl mx-15 flex flex-col md:flex-row justify-between gap-10">
+    
+    <!-- Left: Info Links -->
+    <div class="md:w-1/2 grid grid-cols-2 gap-5">
+      <h1 class="text-4xl font-semibold text-white">
+        <span class="text-orange-500 font-bold">Re</span>Wear
+      </h1>
+      <br>
+
+      <ul class="space-y-2">
+       <p class ="text-orange-500 text-1xl">HelpFul Links</p>       
+        <li><a href="/templates/About.html" class="hover:underline">About Us</a></li>
+        <li><a href="/templates/Terms_Condition.html" class="hover:underline">Terms & Conditions</a></li>
+        <li><a href="/templates/Privacy.html" class="hover:underline">Privacy Policy</a></li>
+        <li><a href="#" class="hover:underline">FAQs</a></li>
+      </ul>
+
+      <ul class="space-y-2">
+        <br>
+        <li><a href="/templates/index.html" class="hover:underline">Home</a></li>
+        <li><a href="/templates/Listitems.html" class="hover:underline">Start Swaping</a></li>
+        <li><a href="/templates/MainCategory.html" class="hover:underline">Category</a></li>
+        <li><a href="/templates/login.html" class="hover:underline">Login</a></li>
+      </ul>
+
+      
+    </div>
+
+    <!-- Right: Contact -->
+    <div>
+      <h3 class="text-xl font-semibold mb-4">Contact Us</h3>
+      <ul class="space-y-2">
+        <li>Email: <a href="mailto:support@rewear.com" class="hover:underline text-Orange-600">support@rewear.com</a></li>
+        <li>
+          <input type="email" placeholder="Enter your email" class="w-full max-w-md border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"/>
+        </li>
+
+        <li>Phone: <a href="tel:+918000000000" class="hover:underline text-orange-500">+91 80000 00000</a></li>
+        <li>Address: Thane, Maharashtra, India</li>
+        <div class="space-x-4">
+          <i class="fa-brands fa-linkedin"></i> <i class="fa-brands fa-github"></i> <i class="fa-brands fa-instagram"></i>
+        </div>
+        
+      </ul>
+    </div>
+  </div>
+
+  <!-- Bottom Line -->
+  <div class="text-center mt-10 text-sm text-gray-600">
+    &copy; 2025 ReWear. All rights reserved By Aiden, Alison and Praful
+  </div>
+</footer>
+ <script src="../Static/cart.js" defer></script>
+</body>
+<script src="/static/script.js"></script>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>ReWare Clothing</title>
+</head>
+
+
+
+
+
+<body>
+  <!-- Navbar -->
+<div class="bg-white shadow-md px-6 py-4 fixed top-0 left-0 w-full z-50">
+  <nav class="flex items-center justify-between">
+    <!-- Logo -->
+    <h1 class="text-2xl font-semibold text-gray-800">
+      <span class="text-orange-500 font-bold">Re</span>Wear
+    </h1>
+
+    <!-- Hamburger Button (Mobile Only) -->
+<div class="md:hidden text-right px-4 py-2">
+  <button class="text-gray-800 text-3xl focus:outline-none cursor-pointer" onclick="toggleMenu()">
+    &#9776;
+  </button>
+</div>
+
+<!-- Side Panel -->
+<div id="sideMenu" class="fixed top-0 right-0 h-full w-64 bg-white shadow-lg transform translate-x-full transition-transform duration-300 ease-in-out z-50">
+  <div class="flex justify-between items-center px-4 py-4 border-b">
+    <h2 class="text-xl font-bold text-orange-500">Menu</h2>
+    <button onclick="toggleMenu()" class="text-2xlfont-semibold text-gray-800"> <img src="/images/xicon.png" alt="x img" class="h-7 w-7 mx-7 my-3"></button>
+  </div>
+  <ul class="flex flex-col p-4 space-y-4 text-gray-700 font-semibold">
+    <li><a href="/templates/index.html" onclick="toggleMenu()" class="hover:text-orange-500">Home</a></li>
+    <li><a href="/templates/Listitems.html" onclick="toggleMenu()" class="hover:text-orange-500">Start Swapping</a></li>
+    <li><a href="/templates/MainCategory.html" onclick="toggleMenu()" class="hover:text-orange-500">Category</a></li>
+    <li><a href="/templates/About.html" onclick="toggleMenu()" class="hover:text-orange-500">About The Developer</a></li>
+    <li><a href="/templates/contact_us.html" onclick="toggleMenu()" class="hover:text-orange-500">Contact</a></li>
+    <li><a href="/templates/login.html" onclick="toggleMenu()" class="px-3 py-2 bg-orange-500 text-white hover:bg-white border-2 hover:border-orange-500 hover:text-black rounded-md">Login</a></li>
+  </ul>
+</div>
+
+    <!-- Nav Links -->
+    <ul id="navMenu" class="hidden md:flex flex-col md:flex-row gap-6 mt-4 md:mt-0 text-gray-700 font-semibold">
+      <li>
+        <a href="/templates/index.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">Home</a>
+      </li>
+      <li>
+        <a href="/templates/Listitems.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">Start Swapping</a>
+      </li>
+      <li>
+        <a href="/templates/MainCategory.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">Category</a>
+      </li>
+      <li>
+        <a href="/templates/About.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">About The Developer</a>
+      </li>
+      <li>
+        <a href="/templates/contact_us.html" class="px-3 py-2 rounded-md transition-all duration-[900ms] ease-in-out hover:text-orange-500 hover:underline decoration-orange-500">Contact</a>
+      </li>
+
+      <!-- USER PROFILE -->
+      <li id="userInfo" class="hidden">
+        <a href="/templates/Userdashboard.html" class="flex items-center gap-2">
+          <img id="navUserPhoto" class="w-6 h-6 rounded-full" src="" alt="User"/>
+          <span id="navUserName" class="text-gray-800 font-semibold"></span>
+        </a>
+      </li>
+
+      <!-- LOGIN BUTTON -->
+      <li id="loginBtn">
+        <a href="/templates/login.html" class="px-3 py-2 bg-orange-500 text-white hover:bg-white border-2 hover:border-orange-500 hover:text-black rounded-md">
+          Login
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
+<br> <br> <br>
+
+  <!-- --------------------------------------------------------------------------------------------------------- -->
+
+  <!-- Background and Login Section -->
+  <div class="relative h-[90vh] bg-[url('/images/bg_image.jpg')] bg-cover bg-center">
+    <div class="bg-white/50 backdrop-invert backdrop-opacity-10 h-166">
+      <div class="min-h-screen flex items-center justify-center">
+        <div class="bg-white/60 backdrop-blur-md rounded-xl p-8 w-[90%] max-w-md shadow-xl">
+
+          <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Sign In</h2>
+
+          <form>
+            <div class="mb-4">
+              <label class="block text-gray-800 mb-1" for="email">Email</label>
+              <input type="email" id="email" placeholder="Enter your email"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400" />
+            </div>
+
+            <div class="mb-6">
+              <label class="block text-gray-800 mb-1" for="password">Password</label>
+              <input type="password" id="password" placeholder="Enter your password"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400" />
+            </div>
+
+            <button type="submit"
+              class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded-md transition duration-300">
+              Sign in
+            </button>
+
+            <div class="text-center my-2 text-gray-600 font-medium">------------------OR------------------</div>
+
+            <button type="button" id="googleSignInBtn"
+              class="w-full flex items-center justify-center gap-2 border border-gray-400 py-2 rounded-md hover:bg-gray-100 transition duration-300 cursor-pointer">
+              <img src="/images/Google logog.webp" class="w-10 h-10"> Sign in with Google
+            </button>
+
+            <!-- User Profile Info (initially hidden) -->
+              <div id="userProfile" class="hidden mt-6 text-center">
+                <img id="userPhoto" class="w-16 h-16 rounded-full mx-auto mb-2" src="" alt="User Photo">
+                <p id="userName" class="text-gray-800 font-semibold"></p>
+              </div>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAxtSJ5KqfiKjJ7ybOXdqBIqR9Kj1Vaxk8",
+    authDomain: "reware-clothing-7d43e.firebaseapp.com",
+    projectId: "reware-clothing-7d43e",
+    storageBucket: "reware-clothing-7d43e.appspot.com",
+    messagingSenderId: "678123595211",
+    appId: "1:678123595211:web:0e0d1604c0e7929507024e",
+    measurementId: "G-HNSSKC332H"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  const googleBtn = document.getElementById("googleSignInBtn");
+
+  googleBtn.addEventListener("click", async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      localStorage.setItem("userPoints", "200");
+
+      // This native alert blocks script execution until user clicks OK
+      alert("✅ 200 Coins Credited!\nYou will now be redirected to your dashboard.");
+
+      // Redirect after alert is dismissed
+      window.location.href = "/templates/Userdashboard.html";
+
+    } catch (error) {
+      console.error("Sign-in error:", error.message);
+      alert("❌ Google Sign-In failed. Please try again.");
+    }
+  });
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const { displayName, photoURL } = user;
+      document.getElementById("navUserName").textContent = displayName;
+      document.getElementById("navUserPhoto").src = photoURL;
+      document.getElementById("userInfo").classList.remove("hidden");
+      document.getElementById("loginBtn").classList.add("hidden");
+    }
+  });
+  window.addEventListener('beforeunload', () => {
+    firebase.auth().signOut();
+     });
+</script>
+
+
+
+
+
+
+
+
+  
+</body>
+<script src="/static/script.js"></script>
+</html>

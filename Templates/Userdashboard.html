@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReWare Clothing</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+</head>
+<body class="bg-[#fefefe]">
+
+<!-- NAVBAR -->
+<div class="bg-white shadow-md px-6 py-4 fixed top-0 left-0 w-full z-50">
+  <nav class="flex items-center justify-between">
+    <h1 class="text-2xl font-semibold text-gray-800">
+      <span class="text-orange-500 font-bold">Re</span>Wear
+    </h1>
+    <div class="md:hidden">
+      <button onclick="toggleMenu()" class="text-3xl">&#9776;</button>
+    </div>
+    <ul id="navMenu" class="hidden md:flex gap-6 text-gray-700 font-semibold">
+      <li><a href="/templates/index.html" class="hover:text-orange-500">Home</a></li>
+      <li><a href="/templates/Listitems.html" class="hover:text-orange-500">Start Swapping</a></li>
+      <li><a href="/templates/MainCategory.html" class="hover:text-orange-500">Category</a></li>
+      <li><a href="/templates/About.html" class="hover:text-orange-500">About</a></li>
+      <li><a href="/templates/contact_us.html" class="hover:text-orange-500">Contact</a></li>
+      <li id="userInfo" class="hidden flex items-center gap-2">
+        <img id="navUserPhoto" class="w-6 h-6 rounded-full" src="" alt="User" />
+        <span id="navUserName" class="text-gray-800 font-semibold"></span>
+      </li>
+      <li id="loginBtn">
+        <a href="/templates/login.html" class="px-3 py-2 bg-orange-500 text-white rounded-md hover:bg-white border hover:border-orange-500 hover:text-black">Login</a>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+<!-- SIDEMENU (Mobile) -->
+<div id="sideMenu" class="fixed top-0 right-0 h-full w-64 bg-white shadow-lg transform translate-x-full transition-transform duration-300 z-50">
+  <div class="flex justify-between items-center px-4 py-4 border-b">
+    <h2 class="text-xl font-bold text-orange-500">Menu</h2>
+    <button onclick="toggleMenu()"><img src="/images/xicon.png" alt="close" class="h-6 w-6" /></button>
+  </div>
+  <ul class="p-4 space-y-4 font-semibold">
+    <li><a href="/templates/index.html" onclick="toggleMenu()">Home</a></li>
+    <li><a href="/templates/Listitems.html" onclick="toggleMenu()">Start Swapping</a></li>
+    <li><a href="/templates/MainCategory.html" onclick="toggleMenu()">Category</a></li>
+    <li><a href="/templates/About.html" onclick="toggleMenu()">About</a></li>
+    <li><a href="/templates/contact_us.html" onclick="toggleMenu()">Contact</a></li>
+    <li><a href="/templates/login.html" class="bg-orange-500 text-white px-3 py-2 rounded-md">Login</a></li>
+  </ul>
+</div>
+
+<br><br><br>
+
+<!-- DASHBOARD SECTION -->
+<section class="max-w-6xl mx-auto px-6 py-10">
+  <div class="flex flex-col md:flex-row items-center md:items-start justify-between mb-10 gap-6">
+    <div class="flex items-center gap-6">
+      <label class="relative w-28 h-28 border-2 rounded-full overflow-hidden cursor-pointer">
+        <input type="file" id="profileImageInput" class="hidden" accept="image/*" onchange="previewImage(event)" />
+        <img id="profileImagePreview" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="w-full h-full object-cover" />
+      </label>
+      <div>
+        <h2 class="text-2xl font-semibold">Hi, <span id="dashUserName">User</span>!</h2>
+        <p id="dashUserEmail" class="text-sm text-gray-500">user@example.com</p>
+        <div class="mt-2 bg-yellow-100 text-yellow-800 px-2 py-1 rounded-md text-sm w-fit">
+          <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="coin" class="inline w-4 h-4" />
+          Your Points: <span id="userPoints">200</span>
+
+        </div>
+      </div>
+    </div>
+    <a href="/templates/cart.html">
+      <button class="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600">
+        <i class="fa-solid fa-cart-shopping"></i>
+      </button>
+    </a>
+  </div>
+
+  <!-- My Listings -->
+   <h2 class="text-black font-bold text-3xl">My Listings</h2>
+  <div class="bg-[#FBE7D5] rounded-xl p-6 mt-10">
+    <div id="myListings" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    </div>
+   </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-[#131212] text-white px-6 py-10 mt-20">
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-10">
+    <div class="md:w-1/2 grid grid-cols-2 gap-5">
+      <div>
+        <h1 class="text-4xl font-semibold"><span class="text-orange-500">Re</span>Wear</h1>
+        <p class="text-orange-500 mt-4">Helpful Links</p>
+        <ul class="space-y-2">
+          <li><a href="/templates/About.html">About Us</a></li>
+          <li><a href="/templates/Terms_Condition.html">Terms & Conditions</a></li>
+          <li><a href="/templates/Privacy.html">Privacy Policy</a></li>
+          <li><a href="#">FAQs</a></li>
+        </ul>
+      </div>
+      <div>
+        <ul class="space-y-2 mt-10">
+          <li><a href="/templates/index.html">Home</a></li>
+          <li><a href="/templates/Listitems.html">Start Swapping</a></li>
+          <li><a href="/templates/MainCategory.html">Category</a></li>
+          <li><a href="/templates/login.html">Login</a></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h3 class="text-xl font-semibold mb-4">Contact Us</h3>
+      <ul class="space-y-2">
+        <li>Email: <a href="mailto:support@rewear.com" class="text-orange-500">support@rewear.com</a></li>
+        <li><input type="email" placeholder="Enter your email" class="w-full border px-3 py-2 rounded-md" /></li>
+        <li>Phone: <a href="tel:+918000000000" class="text-orange-500">+91 80000 00000</a></li>
+        <li>Address: Thane, Maharashtra, India</li>
+        <li class="flex gap-4 mt-2 text-xl">
+          <i class="fa-brands fa-linkedin"></i><i class="fa-brands fa-github"></i><i class="fa-brands fa-instagram"></i>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="text-center text-sm mt-10 text-gray-500">
+    &copy; 2025 ReWear. All rights reserved by Aiden, Alison and Praful.
+  </div>
+</footer>
+
+
+<!--Upladthings-->
+<script>
+  // Fetch product listings from backend
+  fetch("http://localhost:5000/products")
+    .then((res) => res.json())
+    .then((listings) => {
+      const container = document.getElementById("myListings");
+
+      if (!listings || listings.length === 0) {
+        container.innerHTML = "<p class='text-center col-span-full'>No listings yet.</p>";
+      } else {
+        listings.forEach(({ name, price, image }) => {
+          const card = document.createElement("div");
+          card.className = "bg-white p-4 shadow rounded-md";
+          card.innerHTML = `
+            <img src="http://localhost:5000/uploads/${image}" alt="${name}" class="w-full h-48 object-contain mb-2 rounded" />
+            <h3 class="text-lg font-semibold">${name}</h3>
+            <p class="text-gray-600">${price}</p>
+          `;
+          container.appendChild(card);
+        });
+      }
+    })
+    .catch((err) => {
+      // console.error("Failed to load listings:", err);
+      document.getElementById("myListings").innerHTML =
+        "<p class='text-center col-span-full text-red-600'>Error loading listings.</p>";
+    });
+</script>
+
+
+
+
+
+
+<!-- SCRIPTS -->
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAxtSJ5KqfiKjJ7ybOXdqBIqR9Kj1Vaxk8",
+    authDomain: "reware-clothing-7d43e.firebaseapp.com",
+    projectId: "reware-clothing-7d43e",
+    storageBucket: "reware-clothing-7d43e.appspot.com",
+    messagingSenderId: "678123595211",
+    appId: "1:678123595211:web:0e0d1604c0e7929507024e",
+    measurementId: "G-HNSSKC332H"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      document.getElementById("userInfo").classList.remove("hidden");
+      document.getElementById("loginBtn").classList.add("hidden");
+
+      document.getElementById("navUserName").textContent = user.displayName;
+      document.getElementById("navUserPhoto").src = user.photoURL;
+      document.getElementById("dashUserName").textContent = user.displayName;
+      document.getElementById("dashUserEmail").textContent = user.email;
+      document.getElementById("profileImagePreview").src = user.photoURL;
+
+     // Only set to 200 if not already set
+if (localStorage.getItem("userPoints") === null) {
+  localStorage.setItem("userPoints", "200");
+}
+
+// Always reflect current value from localStorage
+document.getElementById("userPoints").textContent = localStorage.getItem("userPoints");
+
+    }
+  });
+
+  async function loadProducts() {
+    const container = document.getElementById("myListings");
+    const snapshot = await db.collection("products").orderBy("timestamp", "desc").get();
+    container.innerHTML = "";
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      container.innerHTML += `
+        <div class="bg-white rounded-xl border border-orange-300 p-4">
+          <img src="${data.imageUrl}" class="w-full h-40 object-cover rounded-md mb-2" />
+          <h3 class="text-lg font-semibold">${data.name}</h3>
+          <p class="text-gray-600 text-sm">${data.description}</p>
+        </div>`;
+    });
+  }
+
+  window.onload = loadProducts;
+
+  function toggleMenu() {
+    const menu = document.getElementById("sideMenu");
+    menu.classList.toggle("translate-x-full");
+  }
+
+  function previewImage(event) {
+    const reader = new FileReader();
+    reader.onload = function () {
+      document.getElementById("profileImagePreview").src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+  }
+  
+</script>
+
+
+
+
+
+<script src="/static/script.js"></script>
+</body>
+</html>
+
