@@ -20,9 +20,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ✅ MongoDB connection
-mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/contact-form", {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+
 }).then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
@@ -116,6 +117,7 @@ app.use('/images', express.static(path.join(__dirname, 'Images')));
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "Templates", "index.html"));
 });
+
 app.get("/:page", (req, res) => {
   const filePath = path.join(__dirname, "Templates", `${req.params.page}`);
   res.sendFile(filePath, function (err) {
