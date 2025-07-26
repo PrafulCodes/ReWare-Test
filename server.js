@@ -111,6 +111,7 @@ app.get("/products", (req, res) => {
 app.use(express.static(path.join(__dirname, "Templates")));
 app.use(express.static(path.join(__dirname, "Static")));
 app.use('/images', express.static(path.join(__dirname, 'Images')));
+app.use('/templates', express.static(path.join(__dirname, 'Templates')));
 
 
 // ✅ Serve index.html by default
