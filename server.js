@@ -110,6 +110,7 @@ app.get("/products", (req, res) => {
 // ✅ Serve static files from the "Templates" and "Static" folders
 app.use(express.static(path.join(__dirname, "Templates")));
 app.use(express.static(path.join(__dirname, "Static")));
+app.use('/static', express.static(path.join(__dirname, 'Static')));
 app.use('/images', express.static(path.join(__dirname, 'Images')));
 app.use('/templates', express.static(path.join(__dirname, 'Templates')));
 
