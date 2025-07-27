@@ -5,8 +5,8 @@ import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
-import mongoose from "mongoose"; // ✅ MongoDB
-import dotenv from "dotenv"; // ✅ Load env vars
+import mongoose from "mongoose";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -19,12 +19,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ✅ MongoDB connection (cleaned up)
+// ✅ MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// ✅ Mongoose schema for contact
+// ✅ Contact Schema
 const contactSchema = new mongoose.Schema({
   name: String,
   email: String,
@@ -52,7 +52,7 @@ app.post("/contact", async (req, res) => {
   }
 });
 
-// ✅ Multer setup for image upload
+// ✅ Multer setup
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadPath = path.join(__dirname, "uploads");
@@ -105,20 +105,21 @@ app.get("/products", (req, res) => {
   }
 });
 
-// ✅ Serve static files from the "Templates" and "Static" folders
+// ✅ Static folders
 app.use(express.static(path.join(__dirname, "Templates")));
 app.use(express.static(path.join(__dirname, "Static")));
 app.use('/static', express.static(path.join(__dirname, 'Static')));
 app.use('/images', express.static(path.join(__dirname, 'Images')));
 app.use('/templates', express.static(path.join(__dirname, 'Templates')));
 
-// ✅ Serve index.html by default
+// ✅ Default index.html route
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "Templates", "index.html"));
 });
 
-app.get("/:page", (req, res) => {
-  const filePath = path.join(__dirname, "Templates", `${req.params.page}`);
+// ✅ Fixed route: use .html extension to avoid conflict with API routes
+app.get("/:page.html", (req, res) => {
+  const filePath = path.join(__dirname, "Templates", `${req.params.page}.html`);
   res.sendFile(filePath, function (err) {
     if (err) {
       res.status(404).send("Page not found");
@@ -126,7 +127,12 @@ app.get("/:page", (req, res) => {
   });
 });
 
-// ✅ Start the server
+// ✅ Optional: fallback 404 route
+app.use((req, res) => {
+  res.status(404).send("Page not found");
+});
+
+// ✅ Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 App is running on port ${PORT}`);
