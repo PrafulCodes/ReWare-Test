@@ -25,7 +25,6 @@ window.addEventListener("DOMContentLoaded", () => {
     const sideMenu = document.getElementById('sideMenu');
     sideMenu.classList.toggle('translate-x-full');
   }
-
   //uploadthings
 
   document.getElementById("productForm").addEventListener("submit", async function (e) {
