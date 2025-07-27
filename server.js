@@ -19,12 +19,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ✅ MongoDB connection
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-
-}).then(() => console.log("✅ MongoDB connected"))
+// ✅ MongoDB connection (cleaned up)
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
 // ✅ Mongoose schema for contact
@@ -107,13 +104,13 @@ app.get("/products", (req, res) => {
     res.status(200).json([]);
   }
 });
+
 // ✅ Serve static files from the "Templates" and "Static" folders
 app.use(express.static(path.join(__dirname, "Templates")));
 app.use(express.static(path.join(__dirname, "Static")));
 app.use('/static', express.static(path.join(__dirname, 'Static')));
 app.use('/images', express.static(path.join(__dirname, 'Images')));
 app.use('/templates', express.static(path.join(__dirname, 'Templates')));
-
 
 // ✅ Serve index.html by default
 app.get("/", (req, res) => {
@@ -128,12 +125,9 @@ app.get("/:page", (req, res) => {
     }
   });
 });
+
 // ✅ Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 App is running on port ${PORT}`);
 });
-app.get("/", (req, res) => {
-  res.send("🚀 ReWear backend is live");
-});
-
