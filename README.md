@@ -94,8 +94,7 @@ https://github.com/Beeb4Life
 
 🌐 Live Demo 
 
-🔗 Live Project: [Click Here
-](https://web-production-c99ca.up.railway.app/)
+🔗 Live Project: https://web-production-c99ca.up.railway.app/
 ---
 
 📱 We’ve tried our best to make ReWare mobile-friendly.
