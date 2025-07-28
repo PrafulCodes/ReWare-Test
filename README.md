@@ -87,14 +87,14 @@ node server.js
 
 👥 Team Members
 
-https://github.com/Alisonpinto
-https://github.com/Beeb4Life
+Aiden Rodrigues
+
+Alison Pinto
 
 ---
 
-🌐 Live Demo 
-
-🔗 Live Project: https://web-production-c99ca.up.railway.app/
+🌐 Live Demo
+👉 Live Project: https://web-production-c99ca.up.railway.app/
 ---
 
 📱 We’ve tried our best to make ReWare mobile-friendly.
